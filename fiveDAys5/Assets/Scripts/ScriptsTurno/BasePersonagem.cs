@@ -1,33 +1,36 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
+using System.Collections;
 
 public class BasePersonagem : MonoBehaviour, IDamageable
 {
-    [SerializeField]public Slider lifeBar;
+    [SerializeField] private Slider lifeBar; // Barra de vida do personagem
+    private TextMeshProUGUI lifeText; // Texto exibindo a vida atual
+
     public int força;
     public int vidaAtual;
     public int vidaMaxima;
     public int defesa;
     public float duration;
-    Vector2 initialPos;
+
+    private Vector2 initialPos;
     public bool jaAtacou;
     public CharacterStatusGeneric characterStatus;
-    TextMeshProUGUI lifeText;
+
     void Start()
     {
         initialPos = transform.position;
     }
+
+    // Configura o status do personagem a partir do CharacterStatus
     public void SetupStatus()
     {
-        print("setando status: " + gameObject.name);
         força = characterStatus.força;
         vidaAtual = characterStatus.vidaAtual;
         vidaMaxima = characterStatus.vidaMaxima;
         defesa = characterStatus.defesa;
+
         if (lifeBar != null)
         {
             lifeText = lifeBar.GetComponentInChildren<TextMeshProUGUI>();
@@ -36,68 +39,55 @@ public class BasePersonagem : MonoBehaviour, IDamageable
             UpdateLife();
         }
     }
-    void UpdateLife()
+
+    // Atualiza a barra de vida na interface
+    private void UpdateLife()
     {
         lifeBar.value = vidaAtual;
-        lifeText.text = vidaAtual.ToString() + " / " + vidaMaxima.ToString();
+        lifeText.text = $"{vidaAtual} / {vidaMaxima}";
     }
+
+    // Recebe dano e atualiza a vida
     public void TakeDamage(int damage)
     {
-        TurnModeManager turnModeManager = TurnModeManager.instance;
         if (vidaAtual > 0)
         {
-            vidaAtual -= damage;
+            vidaAtual -= damage; // Subtrai o dano da vida
             UpdateLife();
         }
-        if(vidaAtual <= 0)
+
+        if (vidaAtual <= 0)
         {
-            turnModeManager.aliadosPersonagens.Remove(this);
-            turnModeManager.aliados.Remove(gameObject.GetComponent<Aliados>());
-            turnModeManager.inimigosPersonagens.Remove(this);
-            turnModeManager.inimigos.Remove(gameObject.GetComponent<EnemyAI>());
-            if(lifeBar != null)
-            {
+            // Desativa o personagem e a barra de vida quando ele morre
+            TurnModeManager.instance.aliadosPersonagens.Remove(this);
+            TurnModeManager.instance.inimigosPersonagens.Remove(this);
+            if (lifeBar != null)
                 Destroy(lifeBar.gameObject);
-            }
-            Destroy(gameObject);
+
+            Destroy(gameObject); // Destroi o objeto
         }
     }
+
+    // Move o personagem para uma nova posição
     public void MovePlayerToPos(Vector2 newPos)
     {
         StartCoroutine(MovePlayer(newPos));
     }
-    public IEnumerator MovePlayer(Vector2 newPos)
+
+    private IEnumerator MovePlayer(Vector2 newPos)
     {
-        float iterador = 0;
-        Turnos turno = TurnModeManager.instance.turno;
-        if (turno == Turnos.EnemyTurn)
+        float iterator = 0;
+        while (iterator < duration)
         {
-            newPos.x += 2;
-        }else if(turno == Turnos.PlayerTurn)
-        {
-            newPos.x -= 2;
-        }
-        while (iterador < duration)
-        {
-            float playerNewY = Mathf.Lerp(initialPos.y, newPos.y, iterador) + 0.5f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(iterador));
-            float playerNewX = Mathf.Lerp(initialPos.x, newPos.x, iterador);
+            float playerNewX = Mathf.Lerp(initialPos.x, newPos.x, iterator);
+            float playerNewY = Mathf.Lerp(initialPos.y, newPos.y, iterator);
             transform.position = new Vector2(playerNewX, playerNewY);
-            iterador += Time.deltaTime * duration;
+
+            iterator += Time.deltaTime * duration;
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.1f);
-        iterador = 0;
-        while (iterador < duration)
-        {
-            float playerNewY = Mathf.Lerp(newPos.y, initialPos.y, iterador) + 0.5f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(iterador));
-            float playerNewX = Mathf.Lerp(newPos.x, initialPos.x, iterador);
-            transform.position = new Vector2(playerNewX, playerNewY);
-            iterador += Time.deltaTime * duration;
-            yield return null;
-        }
         jaAtacou = true;
-        print("atacou");
-        TurnModeManager.instance.CheckIfAllCharactersAttacked();
+        TurnModeManager.instance.CheckIfAllCharactersAttacked(); // Verifica se todos os personagens atacaram
     }
 }

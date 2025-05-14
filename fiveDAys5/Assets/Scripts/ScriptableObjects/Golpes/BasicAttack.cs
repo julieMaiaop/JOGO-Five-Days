@@ -1,19 +1,26 @@
 using System.Collections;
 using UnityEngine;
 using System.Threading.Tasks;
+
 [CreateAssetMenu(menuName = "Ataque/AtaqueBásico")]
-    public class BasicAttack : Attack
+public class BasicAttack : Attack
+{
+    // Método que executa o ataque básico
+    public override async void ExecutarAtaque(BasePersonagem alvo)
     {
-        public override async void ExecutarAtaque(BasePersonagem alvo)
-        {
-            //Debug.Log(TurnModeManager.instance.QuemEstaAtacando() + alvo.name);
-            float duração = TurnModeManager.instance.QuemEstaAtacando().duration;
-            base.ExecutarAtaque(alvo);
-            Debug.Log(TurnModeManager.instance.QuemEstaAtacando());
-            TurnModeManager.instance.QuemEstaAtacando().MovePlayerToPos(new Vector2(alvo.transform.position.x, alvo.transform.position.y));
-            await Task.Delay(Mathf.CeilToInt(duração) * 250);
-            alvo.TakeDamage(dano);
-        }
+        // Obtém a duração do personagem que está atacando
+        float duração = TurnModeManager.instance.QuemEstaAtacando().duration;
+
+        // Chama o método base para o ataque
+        base.ExecutarAtaque(alvo);
+
+        // Move o personagem até a posição do alvo
+        TurnModeManager.instance.QuemEstaAtacando().MovePlayerToPos(new Vector2(alvo.transform.position.x, alvo.transform.position.y));
+
+        // Aguarda o tempo necessário para a duração do movimento
+        await Task.Delay(Mathf.CeilToInt(duração) * 250);
+
+        // Causa dano ao alvo
+        alvo.TakeDamage(dano);
+    }
 }
-
-

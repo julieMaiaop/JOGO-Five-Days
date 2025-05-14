@@ -1,37 +1,39 @@
 using UnityEngine;
 using System.Collections.Generic;
+
 public class PlayerPartyController : MonoBehaviour
 {
-    [Header("Party Do Player")]
-    [SerializeField] public List<CharacterStatusGeneric> playerParty = new List<CharacterStatusGeneric>();
-    [Space]
-    public List<CharacterStatusGeneric> partyAtual = new List<CharacterStatusGeneric>();
+    [Header("Party do Player")]
+    [SerializeField] private List<CharacterStatusGeneric> playerParty = new List<CharacterStatusGeneric>();  // Lista privada de personagens do jogador
+
+    public List<CharacterStatusGeneric> partyAtual { get; private set; } // Lista pública somente leitura de personagens ativos
+
     public static PlayerPartyController instance;
+
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // Garante que o objeto não seja destruído ao carregar uma nova cena
         }
         else
         {
             Destroy(gameObject);
         }
     }
+
     void Start()
     {
-        partyAtual = playerParty;
+        partyAtual = new List<CharacterStatusGeneric>(playerParty); // Inicializa a lista de personagens ativos
     }
-    void Update()
-    {
-        
-    }
+
+    // Função para curar todos os personagens da party
     public void CurarTodos()
     {
-        for (int i = 0; i < playerParty.Count; i++)
+        foreach (var personagem in playerParty)
         {
-            playerParty[i].vidaAtual = playerParty[i].vidaMaxima;
+            personagem.vidaAtual = personagem.vidaMaxima; // Restaura a vida de todos os personagens
         }
     }
 }
