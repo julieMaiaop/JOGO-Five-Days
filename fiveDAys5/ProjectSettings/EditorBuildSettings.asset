@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/VilaIndio.unity
     guid: 5fde4d7bb7645e24296ac483f101bbc4
+  - enabled: 1
+    path: Assets/Scenes/dentroDaCasaEnemy.unity
+    guid: b3caa6a354b9cd74db52832a48c411ee
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
