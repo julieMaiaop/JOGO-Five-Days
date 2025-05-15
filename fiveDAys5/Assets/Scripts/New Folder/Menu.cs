@@ -1,14 +1,11 @@
 using UnityEngine;
-
-
-
 using UnityEngine.SceneManagement;
 
 public class MenuInicial : MonoBehaviour
 {
-    public void IniciarJogo()
+    public void IniciarJogo(string tp)
     {
-        SceneManager.LoadScene("JUlie");
+        SceneManager.LoadScene(tp);
     }
 
     public void FecharJogo()
