@@ -43,7 +43,6 @@ public class TurnModeManager : MonoBehaviour
         endMenu.SetActive(false); // Desativa o menu de fim de jogo
         turnoDeQualPersonagem = 0; // Começa com o primeiro personagem
     }
-
     // Inicia o ataque do primeiro aliado
     public void FirstAllyAttack()
     {
