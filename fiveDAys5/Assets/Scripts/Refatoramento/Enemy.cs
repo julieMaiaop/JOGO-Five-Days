@@ -1,21 +1,14 @@
 using UnityEngine;
 
-public class Enemy : Character
+public class Enemy : MonoBehaviour
 {
-    // Método que determina a ação do inimigo (atacar)
-    public void Act()
-    {
-        // O inimigo sempre ataca
-        Attack();
+    public Character enemyCharacter;  // Referência ao personagem do inimigo
 
-        // Após a ação do inimigo, passa para o turno do jogador
-        BattleManager.instance.PlayerTurn();
-    }
-
-    private void Attack()
+    // Método do inimigo para atacar o jogador
+    public void Attack()
     {
-        // O inimigo ataca o jogador
+        // Apenas tira a vida do jogador
         Character player = BattleManager.instance.playerCharacter;  // Referência ao jogador
-        DealDamage(player);  // O inimigo causa dano no jogador
+        enemyCharacter.DealDamage(player);
     }
 }

@@ -13,32 +13,41 @@ public class Character : MonoBehaviour
     // Método para causar dano em outro personagem
     public void DealDamage(Character target)
     {
-        int effectiveDamage = isDefending ? damage / 2 : damage;  // Se estiver defendendo, o dano é reduzido
+        int effectiveDamage = isDefending ? 0 : damage; // Se está defendendo, não toma dano
         target.TakeDamage(effectiveDamage);
     }
 
-    // Atualiza o slider de vida
+    // Atualiza a barra de vida
     void UpdateHealthSlider()
     {
-        healthSlider.value = (float)currentHealth / maxHealth;  // Atualiza a barra de vida com a vida atual
+        healthSlider.value = (float)currentHealth / maxHealth;
     }
 
     // Método para o personagem receber dano
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;  // Subtrai o dano da vida atual
+        currentHealth -= damage;
         if (currentHealth < 0)
         {
-            currentHealth = 0;  // Garante que a vida não fique negativa
+            currentHealth = 0;
         }
-
-        // Atualiza o slider após sofrer dano
-        UpdateHealthSlider();
+        UpdateHealthSlider();  // Atualiza a barra de vida
     }
 
-    // Método para resetar a defesa (caso o personagem pare de defender)
+    // Método para curar o personagem (se necessário no futuro)
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        UpdateHealthSlider();  // Atualiza a barra de vida
+    }
+
+    // Método para resetar a defesa
     public void ResetDefense()
     {
-        isDefending = false;  // Reseta a defesa
+        isDefending = false;
     }
 }
